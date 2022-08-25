@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\student;
-use App\Models\Courses;
+use App\Models\Student;
+use App\Models\Course;
 use App\Http\Requests\StorestudentRequest;
 use App\Http\Requests\UpdatestudentRequest;
 use Illuminate\Http\Request;
@@ -18,15 +18,15 @@ class StudentController extends Controller
     public function index(Request $request)
     {
         $request->validate([
-            'firstname'=>['required','min:3','max:25'],
-            'lastname'=>['required','min:3','max:25'],
-            'cnic'=>['required','min:8'],
-            'birthday'=>['required'],
-            'age'=>['required'],
-            'gender'=>['required'],
+            'firstname' => ['required','min:3','max:25'],
+            'lastname' => ['required','min:3','max:25'],
+            'cnic' => ['required','min:8'],
+            'birthday' => ['required'],
+            'age' => ['required'],
+            'gender' => ['required'],
 
         ]);
-        student::create($request->all());
+        Student::create($request->all());
     }
 
     /**
@@ -36,21 +36,15 @@ class StudentController extends Controller
      */
     public function create(Request $request)
     {
-       $Student= new Student;
-       $Student->firstname=$request->firstname;
-       $Student->lastname=$request->lastname;
-       $Student->cnic=$request->cnic;
-       $Student->birthday=$request->birthday;
-       $Student->age=$request->age;
-       $Student->gender=$request->gender;
-       $Student->save();
+        $studentData = $request->except(['course_code','course_title','credit_hours']);
+        $courseData = $request->only(['course_code','course_title','credit_hours']);
 
-       $Courses= new Courses;
-       $Courses->course_code=$request->course_code;
-       $Courses->course_title=$request->course_title;
-       $Courses->credit_hours=$request->credit_hours;
-       $Courses->save();
+        $student = Student::create($studentData);
+
+        $courseIds = explode(',', $request->course_id);
+        $student->course()->sync($courseIds);
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -63,15 +57,58 @@ class StudentController extends Controller
         //
     }
 
+
+    public function getDataTable(Request $request){
+        $query = student::select('students.*');
+        return app('datatables')->eloquent($query)
+            ->addIndexColumn()
+            ->editColumn('firstname', function ($student) {
+                return '<td class="sorting_1">
+                            <span><b>' . $student->firstname . '</b></span>
+                        </td>';
+            })
+            ->editColumn('lastname', function ($student) {
+                return $student->lastname;
+            })
+            ->editColumn('cnic', function ($student) {
+                return '<td class="sorting_1">
+                            <span><b>' . $student->cnic . '</b></span>
+                        </td>';
+            })
+            ->editColumn('birthday', function ($student) {
+                return '<td class="sorting_1">
+                            <span><b>' . $student->birthday . '</b></span>
+                        </td>';
+            })
+            ->editColumn('age', function ($student) {
+                return '<td class="sorting_1">
+                            <span><b>' . $student->age . '</b></span>
+                        </td>';
+            })
+            ->editColumn('gender', function ($student) {
+                return '<td class="sorting_1">
+                            <span><b>' . $student->gender . '</b></span>
+                        </td>';
+            })
+            ->editColumn('created_at', function ($student) {
+                return '<td class="sorting_1">
+                            <span><b>' . $student->created_at . '</b></span>
+                        </td>';
+            })
+            ->rawColumns(['firstname', 'lastname','cnic','birthday','age','gender','course_code','created_at'])
+            ->make(true);
+    }
+
     /**
      * Display the specified resource.
      *
      * @param  \App\Models\student  $student
      * @return \Illuminate\Http\Response
      */
-    public function show(student $student)
+    public function show()
     {
-        //
+            //
+
     }
 
     /**

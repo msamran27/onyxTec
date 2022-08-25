@@ -1,17 +1,17 @@
 <?php
 
 namespace App\Models;
-use App\Models\Courses;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class student extends Model
+class Student extends Model
 {
     use HasFactory;
     protected $guarded = [];
 
-    public function Courses()
+    public function course()
     {
-        return $this->hasMany(Courses::class);
+        return $this->belongsToMany(Course::class,'course_student');
     }
 }

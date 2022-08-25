@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Courses;
+use App\Models\Course;
 use App\Http\Requests\StoreCoursesRequest;
 use App\Http\Requests\UpdateCoursesRequest;
 use Illuminate\Http\Request;
@@ -17,12 +17,11 @@ class CoursesController extends Controller
     public function index(Request $request)
     {
         $request->validate([
-            'course_code'=>['required','min:1','max:25','integer'],
-            'course_title'=>['required','min:1','max:25'],
-            'credit_hours'=>['required','between:0,3','integer'],
-
+            'course_code' => ['required','min:1','max:25','integer'],
+            'course_title' => ['required','min:1','max:25'],
+            'credit_hours' => ['required','between:0,3','integer'],
         ]);
-        Courses::create($request->all());
+        Course::create($request->all());
     }
     /**
      * Show the form for creating a new resource.

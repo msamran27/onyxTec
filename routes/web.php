@@ -19,15 +19,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::view('/book-search','bookSearch');
-Route::get('search}',[BooksController::class,'bookSearch'])->name('autocomplete');
+Route::GET('search}',[BooksController::class,'bookSearch'])->name('autocomplete');
 Route::view('/all-books','all-Books');
 // Route::view('/header','header');
 // Route::view('/footer','footer');
 
 Route::view('/student','student');
-Route::post("/submit", [StudentController::class, "index"]);
+Route::POST("/submit", [StudentController::class, "index"]);
 Route::view('/course','courses');
-Route::post("/submit-course", [CoursesController::class, "index"]);
+Route::POST("/submit-course", [CoursesController::class, "index"]);
 Route::view('/student-course','SC');
-Route::post("/submitCourse", [StudentController::class, "create"]);
-
+Route::POST("/submitCourse", [StudentController::class, "create"]);
+Route::view('/datatable','datatable');
+Route::GET("datatablelist", [StudentController::class, "getDataTable"]);
